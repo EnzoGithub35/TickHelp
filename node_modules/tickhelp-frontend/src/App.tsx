@@ -7,6 +7,10 @@ import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 import Layout from "./components/common/Layout";
+import TicketList from "./pages/tickets/TicketList";
+import CreateTicket from "./pages/tickets/CreateTicket";
+import EditTicket from "./pages/tickets/EditTicket";
+import TicketDetail from "./pages/tickets/TicketDetail";
 import "./App.css";
 import "./styles/layout.css";
 
@@ -32,6 +36,46 @@ const App = () => {
                   <ProtectedRoute>
                     <Layout>
                       <Home />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tickets"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <TicketList />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tickets/create"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <CreateTicket />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tickets/:id/edit"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <EditTicket />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tickets/:id"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <TicketDetail />
                     </Layout>
                   </ProtectedRoute>
                 }
