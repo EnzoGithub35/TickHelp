@@ -4,7 +4,8 @@ import { logger } from '../utils/logger.js';
 
 const { Pool } = pg;
 
-const pool = new Pool({
+// Créer un pool de connexions PostgreSQL
+export const pool = new Pool({
   connectionString: config.database.url,
   ssl: config.env === 'production' ? { rejectUnauthorized: false } : false,
   max: 20,
@@ -12,20 +13,11 @@ const pool = new Pool({
   connectionTimeoutMillis: 2000,
 });
 
-pool.on('connect', () => {
-  logger.info('Connected to PostgreSQL database');
-});
-
-pool.on('error', (err) => {
-  logger.error('PostgreSQL connection error:', err);
-  process.exit(-1);
-});
-
-// Test connection
+// Tester la connexion à la base de données
 export const testConnection = async () => {
   try {
     const client = await pool.connect();
-    await client.query('SELECT NOW()');
+    const result = await client.query('SELECT NOW() as now');
     client.release();
     logger.info('Database connection test successful');
     return true;
@@ -35,4 +27,13 @@ export const testConnection = async () => {
   }
 };
 
-export { pool };
+// Écouter les événements de connexion
+pool.on('error', (err) => {
+  logger.error('Unexpected error on idle client', err);
+  process.exit(-1);
+});
+
+// Écouter les événements de connexion
+pool.on('connect', () => {
+  logger.debug('New client connected to the pool');
+});

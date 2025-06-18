@@ -1,0 +1,115 @@
+.not-found-container {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f9fafb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.not-found-content {
+  max-width: 500px;
+  text-align: center;
+  padding: 40px;
+}
+
+.not-found-container h1 {
+  font-size: 120px;
+  line-height: 1;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(45deg, #3b82f6, #2563eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.error-divider {
+  height: 4px;
+  width: 60px;
+  background-color: #3b82f6;
+  margin: 20px auto;
+  border-radius: 2px;
+}
+
+.not-found-container h2 {
+  font-size: 28px;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+.not-found-container p {
+  font-size: 18px;
+  color: #6b7280;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.not-found-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.not-found-container .btn-primary {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.not-found-container .btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.not-found-container .btn-secondary {
+  background-color: transparent;
+  color: #3b82f6;
+  border: 2px solid #3b82f6;
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.not-found-container .btn-secondary:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.not-found-illustration {
+  display: none;
+  max-width: 400px;
+  margin-left: 40px;
+}
+
+@media (min-width: 768px) {
+  .not-found-container {
+    justify-content: center;
+  }
+
+  .not-found-content {
+    text-align: left;
+    padding: 0;
+  }
+
+  .error-divider {
+    margin-left: 0;
+  }
+
+  .not-found-actions {
+    justify-content: flex-start;
+  }
+
+  .not-found-illustration {
+    display: block;
+  }
+}

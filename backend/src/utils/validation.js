@@ -5,40 +5,38 @@ export const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
-      error: 'Validation failed',
-      code: 'VALIDATION_ERROR',
-      details: errors.array(),
+      success: false,
+      errors: errors.array(),
+      code: 'VALIDATION_ERROR'
     });
   }
   next();
 };
 
-// Validations pour l'authentification
+// Validation pour l'inscription - TRÈS SIMPLIFIÉE POUR LE DÉVELOPPEMENT
 export const validateRegister = [
-  body('email')
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Valid email is required'),
-  body('password')
-    .isLength({ min: 8 })
-    .withMessage('Password must be at least 8 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage('Password must contain at least one lowercase letter, one uppercase letter, and one number'),
   body('firstName')
     .trim()
-    .isLength({ min: 2, max: 50 })
-    .withMessage('First name must be between 2 and 50 characters'),
+    .isLength({ min: 2 })
+    .withMessage('First name is required (min 2 characters)'),
+  
   body('lastName')
     .trim()
-    .isLength({ min: 2, max: 50 })
-    .withMessage('Last name must be between 2 and 50 characters'),
-  body('role')
-    .optional()
-    .isIn(['user', 'manager', 'admin'])
-    .withMessage('Role must be user, manager, or admin'),
-  handleValidationErrors,
+    .isLength({ min: 2 })
+    .withMessage('Last name is required (min 2 characters)'),
+  
+  body('email')
+    .isEmail()
+    .withMessage('Valid email is required'),
+  
+  body('password')
+    .isLength({ min: 3 }) // Version ultra simplifiée pour le développement
+    .withMessage('Password must be at least 3 characters long'),
+  
+  handleValidationErrors
 ];
 
+// Validations pour l'authentification
 export const validateLogin = [
   body('email')
     .isEmail()

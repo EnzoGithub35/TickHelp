@@ -122,6 +122,8 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'LOGOUT' });
   };
 
+
+
   const value = {
     ...state,
     login,

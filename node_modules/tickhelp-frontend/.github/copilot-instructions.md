@@ -908,7 +908,7 @@ This comprehensive instruction guide ensures consistent development practices an
 // Solution pour les conflits de types dans vite.config.ts
 export default defineConfig({
   plugins: [react() as any], // Utiliser le cast pour éviter les conflits de types
-})
+});
 ```
 
 ### Structure des répertoires du frontend
@@ -942,7 +942,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'manager' | 'user';
+  role: "admin" | "manager" | "user";
   isActive: boolean;
   avatarUrl?: string;
   createdAt: string;
@@ -953,9 +953,9 @@ export interface Ticket {
   id: number;
   title: string;
   description?: string;
-  status: 'todo' | 'in_progress' | 'resolved' | 'closed';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  type: 'bug' | 'feature' | 'task' | 'improvement';
+  status: "todo" | "in_progress" | "resolved" | "closed";
+  priority: "low" | "medium" | "high" | "urgent";
+  type: "bug" | "feature" | "task" | "improvement";
   reporterId?: number;
   assigneeId?: number;
   dueDate?: string;
@@ -1000,9 +1000,9 @@ export interface PaginatedResponse<T> {
 
 ```typescript
 // vite.config.ts
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
   plugins: [react() as any],
@@ -1010,20 +1010,20 @@ export default defineConfig({
     port: 3000,
     open: true,
     proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
+      "/api": {
+        target: "http://localhost:3001",
         changeOrigin: true,
         secure: false,
-      }
-    }
+      },
+    },
   },
   build: {
-    outDir: 'dist',
+    outDir: "dist",
     sourcemap: true,
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      "@": path.resolve(__dirname, "src"),
     },
   },
 });
@@ -1049,3 +1049,925 @@ npm install --legacy-peer-deps
 - Mettre en place la mémoisation avec useMemo et useCallback
 - Implémenter le code splitting par route
 - Utiliser des stratégies de cache pour les requêtes API
+
+API Route Documentation
+Here's a comprehensive list of all the API routes available in your Tick'Help backend API:
+
+Authentication Routes
+Method Endpoint Description Access
+POST /api/auth/register Register a new user Public
+POST /api/auth/login Login and get access token Public
+GET /api/auth/profile Get logged in user profile Private
+PUT /api/auth/profile Update user profile Private
+POST /api/auth/logout Logout (client-side) Private
+POST /api/auth/refresh Refresh access token Public (with refresh token)
+User Routes
+Method Endpoint Description Access
+GET /api/users Get all users (with pagination) Admin, Manager
+GET /api/users/:id Get user by ID Admin, Manager, Self
+PUT /api/users/:id Update a user Admin, Manager
+DELETE /api/users/:id Delete a user (soft delete) Admin
+GET /api/users/stats Get user statistics Admin, Manager
+Ticket Routes
+Method Endpoint Description Access
+GET /api/tickets Get all tickets (with filters) Private
+GET /api/tickets/:id Get ticket by ID Private
+POST /api/tickets Create a new ticket Private
+PUT /api/tickets/:id Update a ticket Private (with restrictions)
+DELETE /api/tickets/:id Delete a ticket Admin, Manager
+GET /api/tickets/stats Get ticket statistics Admin, Manager
+GET /api/tickets/:id/comments Get ticket comments Private
+POST /api/tickets/:id/comments Add comment to ticket Private
+POST /api/tickets/:id/attachments Upload file to ticket Private
+Comment Routes
+Method Endpoint Description Access
+PUT /api/comments/:id Update a comment Private (owner, admin, manager)
+DELETE /api/comments/:id Delete a comment Private (owner, admin, manager)
+Attachment Routes
+Method Endpoint Description Access
+GET /api/attachments/:id Download an attachment Private
+DELETE /api/attachments/:id Delete an attachment Private (owner, admin, manager)
+Other Routes
+Method Endpoint Description Access
+GET /api/health Health check endpoint Public
+GET /api API info endpoint Public
+
+## 📋 Backend API Implementation Guide
+
+This section covers the detailed implementation of the Tick'Help backend API, including routes, controllers, services, and middleware.
+
+### 🗂️ Backend Routes Structure
+
+The API follows RESTful principles with a logical organization of endpoints:
+
+```javascript
+// Main Routes Organization
+/api/auth      // Authentication operations
+/api/users     // User management
+/api/tickets   // Ticket operations
+/api/comments  // Comment operations
+/api/attachments // File attachment operations
+
+
+
+How to Use the API in the Frontend
+Here's a quick guide on how to use the API in your frontend:
+
+Setting up the API Client
+
+
+// frontend/src/services/apiClient.js
+import axios from 'axios';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor for adding the auth token
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('authToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Response interceptor for handling errors
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle 401 Unauthorized errors by redirecting to login
+    if (error.response?.status === 401) {
+      localStorage.removeItem('authToken');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default apiClient;
+
+
+// frontend/src/services/authService.js
+import apiClient from './apiClient';
+
+export const authService = {
+  // Register a new user
+  register: async (userData) => {
+    const response = await apiClient.post('/auth/register', userData);
+    if (response.data.success) {
+      localStorage.setItem('authToken', response.data.data.accessToken);
+      localStorage.setItem('refreshToken', response.data.data.refreshToken);
+    }
+    return response.data;
+  },
+
+  // Login user
+  login: async (email, password) => {
+    const response = await apiClient.post('/auth/login', { email, password });
+    if (response.data.success) {
+      localStorage.setItem('authToken', response.data.data.accessToken);
+      localStorage.setItem('refreshToken', response.data.data.refreshToken);
+    }
+    return response.data;
+  },
+
+  // Get user profile
+  getProfile: async () => {
+    const response = await apiClient.get('/auth/profile');
+    return response.data;
+  },
+
+  // Update user profile
+  updateProfile: async (userData) => {
+    const response = await apiClient.put('/auth/profile', userData);
+    return response.data;
+  },
+
+  // Logout user
+  logout: () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
+  },
+
+  // Refresh token
+  refreshToken: async () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
+    }
+    const response = await apiClient.post('/auth/refresh', { refreshToken });
+    if (response.data.success) {
+      localStorage.setItem('authToken', response.data.data.accessToken);
+      localStorage.setItem('refreshToken', response.data.data.refreshToken);
+    }
+    return response.data;
+  },
+
+  // Check if user is authenticated
+  isAuthenticated: () => {
+    return !!localStorage.getItem('authToken');
+  }
+};
+
+
+// frontend/src/services/ticketService.js
+import apiClient from './apiClient';
+
+export const ticketService = {
+  // Get all tickets with filtering & pagination
+  getTickets: async (params) => {
+    const response = await apiClient.get('/tickets', { params });
+    return response.data;
+  },
+
+  // Get ticket by ID
+  getTicket: async (id) => {
+    const response = await apiClient.get(`/tickets/${id}`);
+    return response.data;
+  },
+
+  // Create new ticket
+  createTicket: async (ticketData) => {
+    const response = await apiClient.post('/tickets', ticketData);
+    return response.data;
+  },
+
+  // Update ticket
+  updateTicket: async (id, ticketData) => {
+    const response = await apiClient.put(`/tickets/${id}`, ticketData);
+    return response.data;
+  },
+
+  // Delete ticket
+  deleteTicket: async (id) => {
+    const response = await apiClient.delete(`/tickets/${id}`);
+    return response.data;
+  },
+
+  // Get ticket statistics
+  getTicketStats: async () => {
+    const response = await apiClient.get('/tickets/stats');
+    return response.data;
+  },
+
+  // Get ticket comments
+  getTicketComments: async (id) => {
+    const response = await apiClient.get(`/tickets/${id}/comments`);
+    return response.data;
+  },
+
+  // Add comment to ticket
+  addComment: async (id, commentData) => {
+    const response = await apiClient.post(`/tickets/${id}/comments`, commentData);
+    return response.data;
+  },
+
+  // Upload attachment to ticket
+  uploadAttachment: async (id, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await apiClient.post(`/tickets/${id}/attachments`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  }
+};
+```
+
+# 🧪 Guide de développement frontend Tick'Help
+
+## Mode Développement et Mocks API
+
+Pour faciliter le développement frontend sans dépendance au backend:
+
+### Configuration du Mode DEV pour apiClient
+
+```typescript
+// Service API avec mode développement pour travailler sans backend
+import axios from 'axios';
+import { User } from '../types';
+
+// Activer/désactiver le mode développement
+const DEV_MODE = true; // Mettre à false en production
+
+// Données mockées pour simuler l'API
+const MOCK_DATA = {
+  user: {
+    id: 1,
+    email: "dev@tickhelp.com", 
+    firstName: "Dev",
+    lastName: "User",
+    role: "admin",
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  tickets: [
+    {
+      id: 1,
+      title: "Bug dans le module de login",
+      description: "Les utilisateurs ne peuvent pas se connecter",
+      status: "todo",
+      priority: "high",
+      type: "bug",
+      reporterId: 1,
+      assigneeId: 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+  ],
+  stats: {
+    totalTickets: 25,
+    openTickets: 15,
+    closedTickets: 10,
+    urgentTickets: 5,
+    byStatus: {
+      todo: 8,
+      in_progress: 7,
+      resolved: 5,
+      closed: 5
+    },
+    byPriority: {
+      low: 5,
+      medium: 10,
+      high: 8,
+      urgent: 2
+    },
+    byType: {
+      bug: 12,
+      feature: 8,
+      task: 3,
+      improvement: 2
+    }
+  }
+};
+
+// Intercepteur de réponse avec gestion des mocks en DEV_MODE
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (DEV_MODE) {
+      console.warn('DEV MODE - API Error intercepted:', error.response?.data);
+      
+      // Pour les erreurs d'authentification, simuler une réponse positive
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        console.log('DEV MODE - Mocking authentication response');
+        
+        // Simuler des réponses selon le type de requête
+        const url = error.config?.url || '';
+        
+        if (url.includes('/auth/profile')) {
+          return Promise.resolve({ 
+            data: { 
+              success: true,
+              data: MOCK_DATA.user
+            } 
+          });
+        }
+        
+        if (url.includes('/tickets')) {
+          return Promise.resolve({ 
+            data: { 
+              success: true,
+              data: MOCK_DATA.tickets,
+              pagination: {
+                page: 1,
+                limit: 10,
+                total: MOCK_DATA.tickets.length,
+                totalPages: 1
+              }
+            } 
+          });
+        }
+        
+        // Réponse par défaut pour les autres endpoints
+        return Promise.resolve({ 
+          data: { 
+            success: true,
+            data: {},
+            message: "DEV MODE: Mocked successful response" 
+          } 
+        });
+      }
+    }
+    
+    // Comportement normal en production
+    return Promise.reject(error);
+  }
+);
+
+
+// Structure standard des réponses API
+interface ApiResponse<T> {
+  success: boolean;       // Indique si la requête a réussi
+  data: T;                // Données retournées par l'API
+  message?: string;       // Message facultatif (confirmation, erreur)
+  error?: string;         // Message d'erreur (si success = false)
+  code?: string;          // Code d'erreur (si applicable)
+}
+
+// Structure pour les réponses paginées
+interface PaginatedResponse<T> extends ApiResponse<T[]> {
+  pagination: {
+    page: number;         // Page actuelle
+    limit: number;        // Nb d'éléments par page
+    total: number;        // Nb total d'éléments
+    totalPages: number;   // Nb total de pages
+  }
+}
+
+
+// login request:
+
+{
+  "email": "user@example.com",
+  "password": "SecurePassword123"
+}
+
+// Login Response:
+
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": 1,
+      "email": "user@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "role": "user",
+      "isActive": true,
+      "avatarUrl": null,
+      "createdAt": "2023-06-15T10:30:00.000Z",
+      "updatedAt": "2023-06-15T10:30:00.000Z"
+    },
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+
+// Get Tickets Response:
+
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "title": "Bug dans le module de login",
+      "description": "Les utilisateurs ne peuvent pas se connecter",
+      "status": "todo",
+      "priority": "high",
+      "type": "bug",
+      "reporterId": 1,
+      "assigneeId": 1,
+      "estimatedHours": 4,
+      "actualHours": 0,
+      "createdAt": "2023-06-15T10:30:00.000Z",
+      "updatedAt": "2023-06-15T10:30:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 25,
+    "totalPages": 3
+  }
+}
+
+// Get Ticket Stats Response:
+
+{
+  "success": true,
+  "data": {
+    "totalTickets": 25,
+    "openTickets": 15,
+    "closedTickets": 10,
+    "urgentTickets": 5,
+    "byStatus": {
+      "todo": 8,
+      "in_progress": 7,
+      "resolved": 5, 
+      "closed": 5
+    },
+    "byPriority": {
+      "low": 5,
+      "medium": 10,
+      "high": 8,
+      "urgent": 2
+    },
+    "byType": {
+      "bug": 12,
+      "feature": 8,
+      "task": 3,
+      "improvement": 2
+    }
+  }
+}
+
+
+Composants UI essentiels
+LoadingSpinner
+Composant pour afficher un indicateur de chargement
+
+// src/components/ui/LoadingSpinner.tsx
+import React from "react";
+
+interface LoadingSpinnerProps {
+  size?: "small" | "medium" | "large";
+  color?: string;
+  fullScreen?: boolean;
+}
+
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+  size = "medium",
+  color = "primary",
+  fullScreen = false,
+}) => {
+  const spinnerClasses = [
+    "spinner",
+    `spinner-${size}`,
+    `spinner-${color}`,
+    fullScreen ? "spinner-fullscreen" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  // Ajout des styles en ligne pour assurer l'affichage
+  const spinnerStyle = {
+    display: 'inline-block',
+    width: size === 'small' ? '20px' : size === 'medium' ? '40px' : '60px',
+    height: size === 'small' ? '20px' : size === 'medium' ? '40px' : '60px',
+    border: `4px solid ${color === 'primary' ? '#3b82f6' : color}`,
+    borderRadius: '50%',
+    borderTopColor: 'transparent',
+    animation: 'spin 1s linear infinite',
+  };
+
+  const containerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: fullScreen ? '100vw' : '100%',
+    height: fullScreen ? '100vh' : '100%',
+    position: fullScreen ? 'fixed' : 'relative',
+    top: fullScreen ? 0 : undefined,
+    left: fullScreen ? 0 : undefined,
+    background: fullScreen ? 'rgba(255, 255, 255, 0.8)' : 'transparent',
+    zIndex: fullScreen ? 9999 : undefined,
+  } as React.CSSProperties;
+
+  return (
+    <div style={containerStyle}>
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
+      <div className={spinnerClasses} style={spinnerStyle}></div>
+    </div>
+  );
+};
+
+
+# TickHelp - Instructions pour l'intégration Frontend-Backend
+
+## 🚧 Mode développement simplifié
+
+Pour faciliter le développement et les tests, le backend TickHelp implémente un **mode simplifié** qui contourne l'authentification et utilise des données de test. Ce mode est activé automatiquement en environnement de développement.
+
+### Caractéristiques du mode développement
+
+- **Authentification désactivée** : Pas besoin de token JWT valide pour accéder aux endpoints protégés
+- **Utilisateur fictif** : Un utilisateur administrateur est automatiquement injecté dans chaque requête
+- **Données simulées** : Des données de tickets fictives sont générées à la volée
+
+```javascript
+// Middleware d'authentification simplifié pour le développement
+// src/middleware/auth.js
+export const authenticateToken = async (req, res, next) => {
+  // Bypass complet du système d'authentification
+  logger.warn('⚠️ MODE DÉVELOPPEMENT: Authentification désactivée');
+  
+  // Utilisateur factice pour permettre l'accès à toutes les routes
+  req.user = {
+    id: 1,
+    email: 'dev@example.com',
+    role: 'admin',
+    is_active: true,
+    first_name: 'Dev',
+    last_name: 'User'
+  };
+  
+  return next();
+};
+
+
+🔄 Communication Frontend-Backend
+Configuration du client API
+
+// frontend/src/services/apiClient.js
+import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:3001/api';
+
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// Version simplifiée pour le développement - n'ajoute pas de token
+apiClient.interceptors.request.use(
+  (config) => {
+    // En production, on ajouterait le token ici
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export default apiClient;
+
+Services pour l'authentification et les tickets
+
+// frontend/src/services/authService.js
+import apiClient from './apiClient';
+
+const authService = {
+  register: async (userData) => {
+    const response = await apiClient.post('/auth/register', userData);
+    return response.data;
+  },
+
+  login: async (credentials) => {
+    const response = await apiClient.post('/auth/login', credentials);
+    return response.data;
+  },
+
+  logout: () => {
+    localStorage.removeItem('authToken');
+  },
+
+  getProfile: async () => {
+    const response = await apiClient.get('/auth/profile');
+    return response.data;
+  },
+
+  updateProfile: async (userData) => {
+    const response = await apiClient.put('/auth/profile', userData);
+    return response.data;
+  },
+
+  isAuthenticated: () => {
+    // En mode développement, toujours retourner true
+    return true;
+  }
+};
+
+// frontend/src/services/ticketService.js
+import apiClient from './apiClient';
+
+const ticketService = {
+  getAllTickets: async (options = {}) => {
+    const response = await apiClient.get('/tickets', { params: options });
+    return response.data;
+  },
+
+  getTicketById: async (id) => {
+    const response = await apiClient.get(`/tickets/${id}`);
+    return response.data;
+  },
+
+  createTicket: async (ticketData) => {
+    const response = await apiClient.post('/tickets', ticketData);
+    return response.data;
+  },
+
+  updateTicket: async (id, ticketData) => {
+    const response = await apiClient.put(`/tickets/${id}`, ticketData);
+    return response.data;
+  },
+
+  deleteTicket: async (id) => {
+    const response = await apiClient.delete(`/tickets/${id}`);
+    return response.data;
+  },
+
+  getTicketComments: async (id) => {
+    const response = await apiClient.get(`/tickets/${id}/comments`);
+    return response.data;
+  },
+
+  addComment: async (id, commentData) => {
+    const response = await apiClient.post(`/tickets/${id}/comments`, commentData);
+    return response.data;
+  },
+
+  getStatistics: async () => {
+    const response = await apiClient.get('/tickets/stats');
+    return response.data;
+  }
+};
+
+📊 Format des données API
+Toutes les réponses API suivent une structure standardisée :
+
+{
+  success: true|false,  // Indique si la requête a réussi
+  data: {}, // Données principales (objet ou tableau selon l'endpoint)
+  message: "Message explicatif optionnel",
+  pagination: {}, // Pour les listes paginées uniquement
+  code: "CODE_ERREUR" // Uniquement en cas d'erreur
+}
+
+Endpoints d'authentification
+POST /api/auth/register
+
+
+// Requête
+{
+  "firstName": "John", 
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+
+// Réponse
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "role": "user"
+    },
+    "accessToken": "jwt-token-string"
+  }
+}
+
+POST /api/auth/login
+
+// Requête
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+
+// Réponse
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "role": "user",
+      "avatarUrl": null
+    },
+    "accessToken": "jwt-token-string"
+  }
+}
+
+GET /api/auth/profile
+
+// Réponse
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "email": "dev@example.com",
+    "firstName": "Dev",
+    "lastName": "User",
+    "role": "admin",
+    "avatarUrl": null,
+    "isActive": true,
+    "createdAt": "2023-07-30T12:00:00Z",
+    "updatedAt": "2023-07-30T12:00:00Z"
+  }
+}
+
+
+Endpoints pour les tickets
+GET /api/tickets
+
+
+// Paramètres de requête optionnels:
+// ?status=todo&priority=high&page=1&limit=10
+
+// Réponse
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "title": "Problème de connexion à la base de données",
+      "description": "Les utilisateurs ne peuvent pas se connecter à la base de données principale",
+      "status": "todo",
+      "priority": "high",
+      "type": "bug",
+      "reporter_id": 1,
+      "assignee_id": null,
+      "created_at": "2023-07-29T10:00:00Z",
+      "updated_at": "2023-07-29T10:00:00Z",
+      "reporter": {
+        "first_name": "Dev",
+        "last_name": "User"
+      }
+    },
+    // ... autres tickets
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 3,
+    "totalPages": 1
+  }
+}
+
+GET /api/tickets/:id
+
+// Réponse
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "title": "Problème de connexion à la base de données",
+    "description": "Les utilisateurs ne peuvent pas se connecter à la base de données principale",
+    "status": "todo",
+    "priority": "high",
+    "type": "bug",
+    "reporter_id": 1,
+    "assignee_id": null,
+    "due_date": "2023-08-15T00:00:00Z",
+    "estimated_hours": 8,
+    "actual_hours": null,
+    "tags": ["database", "connection", "critical"],
+    "created_at": "2023-07-29T10:00:00Z",
+    "updated_at": "2023-07-29T10:00:00Z",
+    "reporter": {
+      "first_name": "Dev",
+      "last_name": "User"
+    },
+    "assignee": null
+  }
+}
+
+POST /api/tickets
+
+// Requête
+{
+  "title": "Nouvelle fonctionnalité de recherche",
+  "description": "Implémenter une fonctionnalité de recherche avancée dans l'application",
+  "status": "todo",
+  "priority": "medium",
+  "type": "feature"
+}
+
+// Réponse
+{
+  "success": true,
+  "message": "Ticket created successfully",
+  "data": {
+    "id": 4,
+    "title": "Nouvelle fonctionnalité de recherche",
+    "description": "Implémenter une fonctionnalité de recherche avancée dans l'application",
+    "status": "todo",
+    "priority": "medium",
+    "type": "feature",
+    "reporter_id": 1,
+    "assignee_id": null,
+    "created_at": "2023-08-01T15:45:00Z",
+    "updated_at": "2023-08-01T15:45:00Z"
+  }
+}
+
+
+GET /api/tickets/stats
+
+// Réponse
+{
+  "success": true,
+  "data": {
+    "total": 45,
+    "byStatus": {
+      "todo": 12,
+      "in_progress": 8,
+      "resolved": 20,
+      "closed": 5
+    },
+    "byPriority": {
+      "low": 10,
+      "medium": 15,
+      "high": 15,
+      "urgent": 5
+    },
+    "byType": {
+      "bug": 20,
+      "feature": 10,
+      "task": 10,
+      "improvement": 5
+    },
+    "recentActivity": {
+      "created": 10,
+      "updated": 15,
+      "resolved": 5
+    }
+  }
+}
+
+🌈 Constantes et énumérations
+Pour maintenir la cohérence entre le frontend et le backend, utilisez ces constantes :
+
+// frontend/src/constants/ticketConstants.js
+export const TICKET_STATUS = {
+  TODO: 'todo',
+  IN_PROGRESS: 'in_progress',
+  RESOLVED: 'resolved',
+  CLOSED: 'closed'
+};
+
+export const TICKET_PRIORITY = {
+  LOW: 'low',
+  MEDIUM: 'medium',
+  HIGH: 'high',
+  URGENT: 'urgent'
+};
+
+export const TICKET_TYPE = {
+  BUG: 'bug',
+  FEATURE: 'feature',
+  TASK: 'task',
+  IMPROVEMENT: 'improvement'
+};
+
+export const USER_ROLE = {
+  ADMIN: 'admin',
+  MANAGER: 'manager',
+  USER: 'user'
+};
+
+🚨 Gestion des erreurs
+Le backend renvoie des erreurs au format suivant :
+
+{
+  "success": false,
+  "error": "Message d'erreur spécifique",
+  "code": "ERROR_CODE",
+  "errors": [] // Détails optionnels pour les erreurs de validation
+}
