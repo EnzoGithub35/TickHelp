@@ -79,138 +79,54 @@ export class Ticket {
       reporterId,
       search,
       sortBy = 'created_at',
-      sortOrder = 'desc'
+      sortOrder = 'desc',
     } = options;
-
     const offset = (page - 1) * limit;
-    
-    let query = `
-      SELECT 
-        t.*,
-        reporter.first_name as reporter_first_name,
-        reporter.last_name as reporter_last_name,
-        reporter.email as reporter_email,
-        assignee.first_name as assignee_first_name,
-        assignee.last_name as assignee_last_name,
-        assignee.email as assignee_email
-      FROM tickets t
-      LEFT JOIN users reporter ON t.reporter_id = reporter.id
-      LEFT JOIN users assignee ON t.assignee_id = assignee.id
-      WHERE 1=1
-    `;
-
-    const params = [];
-    let paramCount = 0;
-
-    // Filtres
-    if (status) {
-      paramCount++;
-      query += ` AND t.status = $${paramCount}`;
-      params.push(status);
-    }
-
-    if (priority) {
-      paramCount++;
-      query += ` AND t.priority = $${paramCount}`;
-      params.push(priority);
-    }
-
-    if (type) {
-      paramCount++;
-      query += ` AND t.type = $${paramCount}`;
-      params.push(type);
-    }
-
-    if (assigneeId) {
-      paramCount++;
-      query += ` AND t.assignee_id = $${paramCount}`;
-      params.push(assigneeId);
-    }
-
-    if (reporterId) {
-      paramCount++;
-      query += ` AND t.reporter_id = $${paramCount}`;
-      params.push(reporterId);
-    }
-
+    let where = [];
+    let values = [];
+    let idx = 1;
+    if (status) { where.push(`status = $${idx++}`); values.push(status); }
+    if (priority) { where.push(`priority = $${idx++}`); values.push(priority); }
+    if (type) { where.push(`type = $${idx++}`); values.push(type); }
+    if (assigneeId) { where.push(`assignee_id = $${idx++}`); values.push(assigneeId); }
+    if (reporterId) { where.push(`reporter_id = $${idx++}`); values.push(reporterId); }
     if (search) {
-      paramCount++;
-      query += ` AND (t.title ILIKE $${paramCount} OR t.description ILIKE $${paramCount})`;
-      params.push(`%${search}%`);
+      where.push(`(title ILIKE $${idx} OR description ILIKE $${idx})`);
+      values.push(`%${search}%`);
+      idx++;
     }
-
-    // Tri
-    const allowedSortFields = ['created_at', 'updated_at', 'due_date', 'priority', 'status', 'title'];
-    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'created_at';
-    const order = sortOrder.toLowerCase() === 'asc' ? 'ASC' : 'DESC';
-    
-    query += ` ORDER BY t.${sortField} ${order}`;
-
-    // Pagination
-    paramCount++;
-    query += ` LIMIT $${paramCount}`;
-    params.push(limit);
-    
-    paramCount++;
-    query += ` OFFSET $${paramCount}`;
-    params.push(offset);
-
-    const result = await pool.query(query, params);
-
-    // Count total
-    let countQuery = 'SELECT COUNT(*) FROM tickets t WHERE 1=1';
-    const countParams = [];
-    let countParamCount = 0;
-
-    // Répéter les mêmes filtres pour le count
-    if (status) {
-      countParamCount++;
-      countQuery += ` AND t.status = $${countParamCount}`;
-      countParams.push(status);
+    const whereClause = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    const query = `SELECT * FROM tickets ${whereClause} ORDER BY ${sortBy} ${sortOrder} LIMIT $${idx} OFFSET $${idx+1}`;
+    values.push(limit, offset);
+    const client = await pool.connect();
+    try {
+      const result = await client.query(query, values);
+      const countRes = await client.query(`SELECT COUNT(*) FROM tickets ${whereClause}`, values.slice(0, idx-1));
+      return {
+        tickets: result.rows,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total: Number(countRes.rows[0].count),
+          totalPages: Math.ceil(Number(countRes.rows[0].count) / limit),
+        },
+      };
+    } finally {
+      client.release();
     }
+  }
 
-    if (priority) {
-      countParamCount++;
-      countQuery += ` AND t.priority = $${countParamCount}`;
-      countParams.push(priority);
+  static async search(q) {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        `SELECT * FROM tickets WHERE title ILIKE $1 OR description ILIKE $1 ORDER BY created_at DESC LIMIT 50`,
+        [`%${q}%`]
+      );
+      return result.rows;
+    } finally {
+      client.release();
     }
-
-    if (type) {
-      countParamCount++;
-      countQuery += ` AND t.type = $${countParamCount}`;
-      countParams.push(type);
-    }
-
-    if (assigneeId) {
-      countParamCount++;
-      countQuery += ` AND t.assignee_id = $${countParamCount}`;
-      countParams.push(assigneeId);
-    }
-
-    if (reporterId) {
-      countParamCount++;
-      countQuery += ` AND t.reporter_id = $${countParamCount}`;
-      countParams.push(reporterId);
-    }
-
-    if (search) {
-      countParamCount++;
-      countQuery += ` AND (t.title ILIKE $${countParamCount} OR t.description ILIKE $${countParamCount})`;
-      countParams.push(`%${search}%`);
-    }
-
-    const countResult = await pool.query(countQuery, countParams);
-    const total = parseInt(countResult.rows[0].count);
-
-    return {
-      tickets: result.rows.map(ticket => this.formatTicket(ticket)),
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit)
-      }
-    };
   }
 
   static async update(id, updateData, userId) {

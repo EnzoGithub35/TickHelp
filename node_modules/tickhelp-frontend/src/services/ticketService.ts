@@ -2,17 +2,25 @@ import apiClient from './apiClient.ts';
 
 export const ticketService = {
   // Get all tickets with filters
-  getTickets: async (filters: Record<string, string | number | undefined> = {}) => {
+  getTickets: async (
+    filters: TicketFilters = {},
+    pagination: PaginationOptions = { page: 1, limit: 10, sortBy: "created_at", sortOrder: "desc" }
+  ): Promise<PaginatedResponse<Ticket>> => {
     const params = new URLSearchParams();
-    
-    Object.keys(filters).forEach(key => {
-      const value = filters[key];
-      if (value !== undefined && value !== null && value !== '') {
-        params.append(key, String(value));
-      }
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) params.append(key, String(value));
     });
-    
+    params.append("page", String(pagination.page));
+    params.append("limit", String(pagination.limit));
+    params.append("sortBy", pagination.sortBy);
+    params.append("sortOrder", pagination.sortOrder);
     const response = await apiClient.get(`/tickets?${params}`);
+    return response.data;
+  },
+
+  // Search tickets
+  searchTickets: async (q: string): Promise<Ticket[]> => {
+    const response = await apiClient.get(`/tickets/search?q=${encodeURIComponent(q)}`);
     return response.data;
   },
 

@@ -5,13 +5,13 @@ const Sidebar = () => (
     <nav>
       <ul>
         <li>
-          <NavLink to="/dashboard">Dashboard</NavLink>
+          <NavLink to="/">Accueil</NavLink>
         </li>
         <li>
           <NavLink to="/tickets">Tickets</NavLink>
         </li>
         <li>
-          <NavLink to="/users">Users</NavLink>
+          <NavLink to="/users">Utilisateurs</NavLink>
         </li>
       </ul>
     </nav>

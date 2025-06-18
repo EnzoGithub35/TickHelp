@@ -12,8 +12,7 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 // Import routes (à créer)
 import { authRoutes } from './routes/auth.js';
 import { dashboardRoutes } from './routes/dashboard.js';
-// import { userRoutes } from './routes/users.js';
-// import { ticketRoutes } from './routes/tickets.js';
+import { ticketRoutes } from './routes/tickets.js';
 
 const app = express();
 
@@ -93,8 +92,7 @@ app.get('/api/health', async (req, res) => {
 // API routes (à décommenter quand les routes seront créées)
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-// app.use('/api/users', userRoutes);
-// app.use('/api/tickets', ticketRoutes);
+app.use('/api/tickets', ticketRoutes);
 
 // API info endpoint
 app.get('/api', (req, res) => {
