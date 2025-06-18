@@ -23,3 +23,8 @@
 {"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T09:52:02.781Z"}
 {"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T09:52:02.890Z"}
 {"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T09:52:02.910Z"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T12:31:37.928Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T12:31:37.933Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T12:31:37.934Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T12:31:38.105Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T12:31:38.113Z"}
