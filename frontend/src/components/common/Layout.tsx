@@ -1,19 +1,19 @@
-import { Outlet } from 'react-router-dom';
-// import Header from './Header';
-// import Sidebar from './Sidebar';
+import Header from "./Header";
+import Sidebar from "./Sidebar";
+import { ReactNode } from "react";
 
-const Layout = () => {
-  return (
-    <div className="app-layout">
-      {/* <Header /> */}
-      <div className="main-content">
-        {/* <Sidebar /> */}
-        <main className="content-area">
-          <Outlet />
-        </main>
-      </div>
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout = ({ children }: LayoutProps) => (
+  <div className="layout">
+    <Header />
+    <div className="main-content">
+      <Sidebar />
+      <main className="page-content">{children}</main>
     </div>
-  );
-};
+  </div>
+);
 
 export default Layout;

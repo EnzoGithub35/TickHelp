@@ -1,11 +1,13 @@
 # Tick'Help Project Instructions for GitHub Copilot
 
 ## 🎯 Project Overview
+
 **Tick'Help** is a comprehensive ticket management system for handling bugs, feature requests, and tasks. This is an educational project for DEVE427 module following industry best practices.
 
 ## 🏗️ Technical Stack
-- **Frontend**: React.js 18+ with Vite
-- **Backend**: Node.js 18+ with Express.js
+
+- **Frontend**: React.js 18+ with Vite, TypeScript
+- **Backend**: Node.js 18+ with Express.js, JavaScript
 - **Database**: PostgreSQL 15+
 - **Authentication**: JWT (JSON Web Tokens)
 - **Testing**: Jest (Backend) + React Testing Library (Frontend)
@@ -16,6 +18,7 @@
 - **Version Control**: Git with GitFlow
 
 ## 📁 Project Structure
+
 ```
 TickHelp/
 ├── frontend/                     # React.js application
@@ -82,6 +85,7 @@ TickHelp/
 ## 🗄️ Database Schema
 
 ### Users Table
+
 ```sql
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -103,6 +107,7 @@ CREATE INDEX idx_users_is_active ON users(is_active);
 ```
 
 ### Tickets Table
+
 ```sql
 CREATE TABLE tickets (
     id SERIAL PRIMARY KEY,
@@ -133,6 +138,7 @@ CREATE INDEX idx_tickets_tags ON tickets USING GIN(tags);
 ```
 
 ### Ticket History Table
+
 ```sql
 CREATE TABLE ticket_history (
     id SERIAL PRIMARY KEY,
@@ -153,6 +159,7 @@ CREATE INDEX idx_ticket_history_created_at ON ticket_history(created_at);
 ```
 
 ### Comments Table
+
 ```sql
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
@@ -171,6 +178,7 @@ CREATE INDEX idx_comments_created_at ON comments(created_at);
 ```
 
 ### Attachments Table
+
 ```sql
 CREATE TABLE attachments (
     id SERIAL PRIMARY KEY,
@@ -190,6 +198,7 @@ CREATE INDEX idx_attachments_user_id ON attachments(user_id);
 ```
 
 ### Database Triggers for Updated_at
+
 ```sql
 -- Function to update the updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -209,8 +218,9 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 ## 🔐 Backend Authentication Implementation Guidelines
 
 ### 1. Registration (`POST /api/auth/register`)
+
 - **Input**: `email`, `password`, `firstName`, `lastName` (optionally `role`)
-- **Validation**: 
+- **Validation**:
   - Email must be unique and valid.
   - Password must be at least 8 characters, contain uppercase, lowercase, and a number.
   - First and last names: 2–50 characters.
@@ -222,8 +232,9 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
   - On success, return user info (without password) and a JWT token.
 
 ### 2. Login (`POST /api/auth/login`)
+
 - **Input**: `email`, `password`
-- **Validation**: 
+- **Validation**:
   - Email must exist and be active.
   - Password must match the stored hash.
 - **Process**:
@@ -231,6 +242,7 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
   - On failure, return a clear error (`INVALID_CREDENTIALS`, `ACCOUNT_DEACTIVATED`, etc.).
 
 ### 3. JWT Token
+
 - **Payload structure**:
   ```json
   {
@@ -245,6 +257,7 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 - **Expiration**: Use `JWT_EXPIRES_IN` from environment variables (e.g., `24h`).
 
 ### 4. Security & Best Practices
+
 - Always validate and sanitize all inputs.
 - Never expose password hashes.
 - Use HTTPS in production.
@@ -252,6 +265,7 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 - Log authentication events for audit.
 
 ### 5. Example Response
+
 ```json
 {
   "user": {
@@ -266,6 +280,7 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 ```
 
 ### 6. Error Codes
+
 - `EMAIL_ALREADY_USED`
 - `INVALID_CREDENTIALS`
 - `ACCOUNT_DEACTIVATED`
@@ -278,6 +293,7 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 **Follow these guidelines for all authentication-related backend code.**
 
 ### Role Permissions
+
 - **Admin**: Full access to all resources
 - **Manager**: Can manage tickets, users in their team
 - **User**: Can create tickets, edit own tickets, comment
@@ -285,6 +301,7 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 ## 📋 MVP Features Requirements
 
 ### 1. Authentication System
+
 - [x] User registration with email verification
 - [x] User login with email/password
 - [x] JWT token-based authentication
@@ -292,12 +309,14 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 - [x] Role-based access control
 
 ### 2. Dashboard
+
 - [x] Overview statistics (total tickets, by status, by priority)
 - [x] Recent activity feed
 - [x] Quick actions (create ticket, search)
 - [x] Assigned tickets summary
 
 ### 3. Ticket Management (CRUD)
+
 - [x] Create new ticket with all fields
 - [x] View ticket details with full information
 - [x] Edit ticket (title, description, status, priority, assignee)
@@ -305,6 +324,7 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 - [x] Bulk operations (status update, assignment)
 
 ### 4. Ticket List & Filtering
+
 - [x] Paginated ticket list
 - [x] Filter by status, priority, type, assignee
 - [x] Sort by created date, updated date, priority, due date
@@ -312,11 +332,13 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 - [x] Advanced search with multiple criteria
 
 ### 5. User Management
+
 - [x] User profile management
 - [x] User list for assignments
 - [x] Role management (admin only)
 
 ### 6. History & Audit Trail
+
 - [x] Track all ticket changes
 - [x] Show modification history
 - [x] User activity logs
@@ -325,12 +347,14 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 ## 🧪 Testing Strategy
 
 ### Backend Testing
+
 - **Unit Tests**: Models, services, utilities
 - **Integration Tests**: API endpoints, database operations
 - **E2E Tests**: Complete user workflows
 - **Coverage Target**: 80%+
 
 ### Frontend Testing
+
 - **Unit Tests**: Components, hooks, utilities
 - **Integration Tests**: Component interactions
 - **E2E Tests**: User journeys with Cypress/Playwright
@@ -339,12 +363,14 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 ## 🔧 Code Quality Standards
 
 ### ESLint Configuration
+
 - Airbnb style guide
 - React hooks rules
 - Import/export rules
 - Accessibility rules
 
 ### Naming Conventions
+
 - **Variables/Functions**: camelCase
 - **Constants**: UPPER_SNAKE_CASE
 - **Components**: PascalCase
@@ -352,6 +378,7 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 - **Database**: snake_case for tables and columns
 
 ### Git Conventions
+
 - **Branches**: feature/ticket-123-description, bugfix/issue-description, hotfix/critical-fix
 - **Commits**: type(scope): description (Conventional Commits)
 - **Types**: feat, fix, docs, style, refactor, test, chore
@@ -359,6 +386,7 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 ## 🚀 Deployment Configuration
 
 ### Environment Variables
+
 ```bash
 # Backend
 NODE_ENV=production
@@ -374,18 +402,21 @@ VITE_APP_NAME=Tick'Help
 ```
 
 ### Docker Configuration
+
 - Multi-stage builds for production
 - Separate containers for frontend, backend, database
 - Docker Compose for local development
 - Health checks for all services
 
 ## 📊 Performance Requirements
+
 - **API Response Time**: < 200ms for most endpoints
 - **Page Load Time**: < 2 seconds
 - **Database Queries**: Optimized with proper indexes
 - **Caching**: Implement Redis for session management
 
 ## 🔒 Security Measures
+
 - Input validation and sanitization
 - SQL injection prevention
 - XSS protection
@@ -395,6 +426,7 @@ VITE_APP_NAME=Tick'Help
 - Password hashing with bcrypt
 
 ## 📈 Monitoring & Logging
+
 - Winston for structured logging
 - Error tracking and reporting
 - Performance monitoring
@@ -404,6 +436,7 @@ VITE_APP_NAME=Tick'Help
 ## 🌐 API Endpoints Structure
 
 ### Authentication Routes
+
 - POST /api/auth/register
 - POST /api/auth/login
 - POST /api/auth/logout
@@ -412,6 +445,7 @@ VITE_APP_NAME=Tick'Help
 - POST /api/auth/reset-password
 
 ### User Routes
+
 - GET /api/users (admin/manager)
 - GET /api/users/:id
 - PUT /api/users/:id
@@ -420,6 +454,7 @@ VITE_APP_NAME=Tick'Help
 - PUT /api/users/profile
 
 ### Ticket Routes
+
 - GET /api/tickets
 - GET /api/tickets/:id
 - POST /api/tickets
@@ -430,6 +465,7 @@ VITE_APP_NAME=Tick'Help
 - GET /api/tickets/:id/comments
 
 ## 🎨 UI/UX Guidelines
+
 - Clean, modern design
 - Responsive layout (mobile-first)
 - Consistent color scheme
@@ -438,6 +474,7 @@ VITE_APP_NAME=Tick'Help
 - Toast notifications for feedback
 
 ## 📝 Development Workflow
+
 1. Create feature branch from develop
 2. Implement feature with tests
 3. Run linting and tests locally
@@ -448,6 +485,7 @@ VITE_APP_NAME=Tick'Help
 8. Merge to main for production
 
 ## 🎯 Success Metrics
+
 - Code coverage > 80%
 - Zero ESLint errors
 - All tests passing
@@ -457,10 +495,10 @@ VITE_APP_NAME=Tick'Help
 
 This instruction file provides comprehensive guidance for developing the Tick'Help application following industry best practices and project requirements.
 
-
 ## 🛠️ Workspace Setup Commands
 
 ### Quick Start
+
 ```bash
 # Clone and setup
 git clone <repository-url>
@@ -471,6 +509,7 @@ npm run dev
 ```
 
 ### Development Commands
+
 ```bash
 # Start development servers
 npm run dev
@@ -491,6 +530,7 @@ npm run docker:down
 ```
 
 ### Project Structure Created
+
 - ✅ React frontend with Vite
 - ✅ Express backend with ES modules
 - ✅ PostgreSQL database with Docker
@@ -501,6 +541,7 @@ npm run docker:down
 - ✅ Workspace npm scripts
 
 ### URLs After Setup
+
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:3001
 - Database: localhost:5432

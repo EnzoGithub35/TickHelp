@@ -6,7 +6,9 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
+import Layout from "./components/common/Layout";
 import "./App.css";
+import "./styles/layout.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,7 +30,9 @@ const App = () => {
                 path="/"
                 element={
                   <ProtectedRoute>
-                    <Home />
+                    <Layout>
+                      <Home />
+                    </Layout>
                   </ProtectedRoute>
                 }
               />

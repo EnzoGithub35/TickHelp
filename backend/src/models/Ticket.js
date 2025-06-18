@@ -322,25 +322,39 @@ export class Ticket {
   }
 
   static async getStats() {
-    const result = await pool.query(`
-      SELECT 
-        COUNT(*) as total_tickets,
-        COUNT(*) FILTER (WHERE status = 'todo') as todo_count,
-        COUNT(*) FILTER (WHERE status = 'in_progress') as in_progress_count,
-        COUNT(*) FILTER (WHERE status = 'resolved') as resolved_count,
-        COUNT(*) FILTER (WHERE status = 'closed') as closed_count,
-        COUNT(*) FILTER (WHERE priority = 'urgent') as urgent_count,
-        COUNT(*) FILTER (WHERE priority = 'high') as high_count,
-        COUNT(*) FILTER (WHERE priority = 'medium') as medium_count,
-        COUNT(*) FILTER (WHERE priority = 'low') as low_count,
-        COUNT(*) FILTER (WHERE type = 'bug') as bug_count,
-        COUNT(*) FILTER (WHERE type = 'feature') as feature_count,
-        COUNT(*) FILTER (WHERE type = 'task') as task_count,
-        COUNT(*) FILTER (WHERE type = 'improvement') as improvement_count
-      FROM tickets
-    `);
-    
-    return result.rows[0];
+    const client = await pool.connect();
+    try {
+      const total = await client.query('SELECT COUNT(*) FROM tickets');
+      const byStatus = await client.query(
+        "SELECT status, COUNT(*) FROM tickets GROUP BY status"
+      );
+      const byPriority = await client.query(
+        "SELECT priority, COUNT(*) FROM tickets GROUP BY priority"
+      );
+      return {
+        total: Number(total.rows[0].count),
+        byStatus: byStatus.rows,
+        byPriority: byPriority.rows,
+      };
+    } finally {
+      client.release();
+    }
+  }
+
+  static async getRecentActivity() {
+    const client = await pool.connect();
+    try {
+      const res = await client.query(
+        `SELECT t.id, t.title, t.status, t.updated_at, u.first_name, u.last_name
+         FROM tickets t
+         LEFT JOIN users u ON t.reporter_id = u.id
+         ORDER BY t.updated_at DESC
+         LIMIT 10`
+      );
+      return res.rows;
+    } finally {
+      client.release();
+    }
   }
 
   static formatTicket(ticket) {
