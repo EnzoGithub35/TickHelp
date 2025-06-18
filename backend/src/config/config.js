@@ -10,9 +10,9 @@ export const config = {
     url: process.env.DATABASE_URL,
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
-    name: process.env.DB_NAME || 'tickhelp_db',
-    user: process.env.DB_USER || 'tickhelp_user',
-    password: process.env.DB_PASSWORD || 'tickhelp_password',
+    name: process.env.DB_NAME || 'tickhelp',
+    user: process.env.DB_USER || 'tickhelp',
+    password: process.env.DB_PASSWORD || 'tickhelp',
   },
   
   jwt: {
