@@ -206,18 +206,76 @@ CREATE TRIGGER update_tickets_updated_at BEFORE UPDATE ON tickets FOR EACH ROW E
 CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 ```
 
-## 🔐 Authentication & Authorization
+## 🔐 Backend Authentication Implementation Guidelines
 
-### JWT Token Structure
-```javascript
+### 1. Registration (`POST /api/auth/register`)
+- **Input**: `email`, `password`, `firstName`, `lastName` (optionally `role`)
+- **Validation**: 
+  - Email must be unique and valid.
+  - Password must be at least 8 characters, contain uppercase, lowercase, and a number.
+  - First and last names: 2–50 characters.
+  - Role: only `user`, `manager`, or `admin` (default: `user`).
+- **Process**:
+  - Hash password with bcrypt before storing.
+  - Insert user in the `users` table with `is_active = true`.
+  - Never return the password or its hash in any response.
+  - On success, return user info (without password) and a JWT token.
+
+### 2. Login (`POST /api/auth/login`)
+- **Input**: `email`, `password`
+- **Validation**: 
+  - Email must exist and be active.
+  - Password must match the stored hash.
+- **Process**:
+  - On success, return user info (without password) and a JWT token.
+  - On failure, return a clear error (`INVALID_CREDENTIALS`, `ACCOUNT_DEACTIVATED`, etc.).
+
+### 3. JWT Token
+- **Payload structure**:
+  ```json
+  {
+    "sub": "user_id",
+    "email": "user@example.com",
+    "role": "user|manager|admin",
+    "iat": "issued_at_timestamp",
+    "exp": "expiration_timestamp"
+  }
+  ```
+- **Secret**: Use `JWT_SECRET` from environment variables.
+- **Expiration**: Use `JWT_EXPIRES_IN` from environment variables (e.g., `24h`).
+
+### 4. Security & Best Practices
+- Always validate and sanitize all inputs.
+- Never expose password hashes.
+- Use HTTPS in production.
+- Use rate limiting on auth routes.
+- Log authentication events for audit.
+
+### 5. Example Response
+```json
 {
-  "sub": "user_id",
-  "email": "user@example.com",
-  "role": "user|manager|admin",
-  "iat": "issued_at_timestamp",
-  "exp": "expiration_timestamp"
+  "user": {
+    "id": 1,
+    "email": "user@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "role": "user"
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
+
+### 6. Error Codes
+- `EMAIL_ALREADY_USED`
+- `INVALID_CREDENTIALS`
+- `ACCOUNT_DEACTIVATED`
+- `TOKEN_EXPIRED`
+- `TOKEN_INVALID`
+- `USER_NOT_FOUND`
+
+---
+
+**Follow these guidelines for all authentication-related backend code.**
 
 ### Role Permissions
 - **Admin**: Full access to all resources

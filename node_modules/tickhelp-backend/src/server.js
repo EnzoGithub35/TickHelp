@@ -10,7 +10,7 @@ import { logger } from './utils/logger.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
 // Import routes (à créer)
-// import { authRoutes } from './routes/auth.js';
+import { authRoutes } from './routes/auth.js';
 // import { userRoutes } from './routes/users.js';
 // import { ticketRoutes } from './routes/tickets.js';
 
@@ -90,7 +90,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 // API routes (à décommenter quand les routes seront créées)
-// app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 // app.use('/api/users', userRoutes);
 // app.use('/api/tickets', ticketRoutes);
 

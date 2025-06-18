@@ -23,3 +23,69 @@
 {"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T09:52:02.781Z"}
 {"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T09:52:02.890Z"}
 {"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T09:52:02.910Z"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T10:05:00.796Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T10:05:00.799Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T10:05:00.799Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T10:05:00.862Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T10:05:00.866Z"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T10:05:01.928Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T10:05:01.933Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T10:05:01.933Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T10:05:02.013Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T10:05:02.017Z"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T10:14:37.270Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T10:14:37.276Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T10:14:37.277Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T10:14:37.403Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T10:14:37.408Z"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T10:14:40.641Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T10:14:40.646Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T10:14:40.647Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T10:14:40.739Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T10:14:40.742Z"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:11.091Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:11.094Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:11.094Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:11.153Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:11.156Z"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:27.293Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:27.296Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:27.296Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:27.355Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:27.358Z"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:28.762Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:28.769Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:28.769Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:28.829Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:28.833Z"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:30.117Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:30.120Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:30.120Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:30.192Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T10:15:30.195Z"}
+{"level":"info","message":"Received SIGINT. Shutting down gracefully...","service":"tickhelp-backend","timestamp":"2025-06-18T10:30:24.557Z"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T10:30:35.266Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T10:30:35.269Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T10:30:35.269Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T10:30:35.345Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T10:30:35.347Z"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T12:13:03.696Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T12:13:03.698Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T12:13:03.699Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T12:13:03.778Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T12:13:03.792Z"}
+{"ip":"::1","level":"info","message":"POST /api/auth/register","service":"tickhelp-backend","timestamp":"2025-06-18T12:20:00.694Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"ip":"::1","level":"info","message":"POST /api/auth/register","service":"tickhelp-backend","timestamp":"2025-06-18T12:20:09.713Z","userAgent":"Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1"}
+{"ip":"::1","level":"info","message":"POST /api/auth/register","service":"tickhelp-backend","timestamp":"2025-06-18T12:20:24.713Z","userAgent":"Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T12:20:24.790Z"}
+{"ip":"::1","level":"info","message":"POST /api/auth/register","service":"tickhelp-backend","timestamp":"2025-06-18T12:20:46.068Z","userAgent":"Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1"}
+{"ip":"::1","level":"info","message":"GET /api/auth/profile","service":"tickhelp-backend","timestamp":"2025-06-18T12:26:00.999Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"ip":"::1","level":"info","message":"GET /api/auth/profile","service":"tickhelp-backend","timestamp":"2025-06-18T12:26:01.005Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"ip":"::1","level":"info","message":"POST /api/auth/login","service":"tickhelp-backend","timestamp":"2025-06-18T12:29:31.635Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T12:29:31.698Z"}
+{"ip":"::1","level":"info","message":"GET /api/auth/profile","service":"tickhelp-backend","timestamp":"2025-06-18T12:29:35.255Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"ip":"::1","level":"info","message":"GET /api/auth/profile","service":"tickhelp-backend","timestamp":"2025-06-18T12:29:35.260Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"ip":"::1","level":"info","message":"POST /api/auth/login","service":"tickhelp-backend","timestamp":"2025-06-18T12:29:36.798Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"ip":"::1","level":"info","message":"GET /api/auth/profile","service":"tickhelp-backend","timestamp":"2025-06-18T12:29:39.153Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"ip":"::1","level":"info","message":"GET /api/auth/profile","service":"tickhelp-backend","timestamp":"2025-06-18T12:29:39.156Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"ip":"::1","level":"info","message":"POST /api/auth/login","service":"tickhelp-backend","timestamp":"2025-06-18T12:29:40.702Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
