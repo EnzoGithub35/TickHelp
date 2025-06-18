@@ -18,3 +18,8 @@
 {"ip":"::1","level":"info","message":"GET /api/health","service":"tickhelp-backend","timestamp":"2025-06-17T09:52:37.427Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
 {"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-17T09:52:37.430Z"}
 {"ip":"::1","level":"info","message":"GET /favicon.ico","service":"tickhelp-backend","timestamp":"2025-06-17T09:52:37.642Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"level":"info","message":"🚀 Server running on port 3001","service":"tickhelp-backend","timestamp":"2025-06-18T09:52:02.767Z"}
+{"level":"info","message":"🌍 Environment: development","service":"tickhelp-backend","timestamp":"2025-06-18T09:52:02.780Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3001/api/health","service":"tickhelp-backend","timestamp":"2025-06-18T09:52:02.781Z"}
+{"level":"info","message":"Connected to PostgreSQL database","service":"tickhelp-backend","timestamp":"2025-06-18T09:52:02.890Z"}
+{"level":"info","message":"Database connection test successful","service":"tickhelp-backend","timestamp":"2025-06-18T09:52:02.910Z"}
