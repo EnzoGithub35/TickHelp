@@ -1,2 +1,5 @@
 backend/logs/
 node_modules/tickhelp-backend/logs/
+.env
+backend/.env
+frontend/.env
